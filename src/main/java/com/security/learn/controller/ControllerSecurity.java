@@ -9,8 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * Created by mohammad on 25/3/17.
@@ -19,38 +18,42 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class ControllerSecurity {
 
 
-
-  @RequestMapping(value = { "/", "/home" }, method = RequestMethod.GET)
+  @GetMapping(value = {"/", "/home"})
   public String homePage(ModelMap model) {
-    model.addAttribute("greeting", "Hi, Welcome to mysite. ");
+    model.addAttribute("greeting", "Hi, Welcome to mysite");
     return "welcome";
   }
 
-  @RequestMapping(value = "/admin", method = RequestMethod.GET)
+  @GetMapping(value = "/admin")
   public String adminPage(ModelMap model) {
     model.addAttribute("user", getPrincipal());
     return "admin";
   }
 
-  @RequestMapping(value = "/db", method = RequestMethod.GET)
+  @GetMapping(value = "/db")
   public String dbaPage(ModelMap model) {
     model.addAttribute("user", getPrincipal());
     return "dba";
   }
 
-  @RequestMapping(value="/logout", method = RequestMethod.GET)
+  @GetMapping(value = "/Access_Denied")
+  public String accessDeniedPage(ModelMap model) {
+    model.addAttribute("user", getPrincipal());
+    return "accessDenied";
+  }
+
+  @GetMapping(value = "/login")
+  public String loginPage() {
+    return "login";
+  }
+
+  @GetMapping(value = "/logout")
   public String logoutPage (HttpServletRequest request, HttpServletResponse response) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     if (auth != null){
       new SecurityContextLogoutHandler().logout(request, response, auth);
     }
-    return "welcome";
-  }
-
-  @RequestMapping(value = "/Access_Denied", method = RequestMethod.GET)
-  public String accessDeniedPage(ModelMap model) {
-    model.addAttribute("user", getPrincipal());
-    return "accessDenied";
+    return "redirect:/login?logout";
   }
 
   private String getPrincipal(){
